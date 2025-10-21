@@ -5,6 +5,7 @@ import guru.qa.country.service.CountryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -18,19 +19,26 @@ public class CountryController {
         this.countryService = countryService;
     }
 
-    @GetMapping("/all")
+    @GetMapping
     public List<Country> getAllCountries() {
         return countryService.allCountries();
     }
 
-    @PostMapping("/add")
+    @PostMapping
     public Country addNewCountry(@RequestBody Country country) {
         return countryService.add(country);
     }
 
-    @PatchMapping("/update_full_name")
-    public Country updateFullName(@RequestBody Country country) {
-        return countryService.updateFullName(country);
+    @PatchMapping("/{code}")
+    public Country updateFullName(@PathVariable("code") String code,
+                                  @RequestBody Country country) {
+        Country updatedCountry = new Country(
+                country.fullName(),
+                code,
+                null,
+                country.updatedAt() != null ? country.updatedAt() : LocalDateTime.now()
+        );
+        return countryService.updateFullName(updatedCountry);
     }
 
 }

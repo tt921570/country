@@ -9,6 +9,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Component
@@ -45,6 +46,8 @@ public class DbCountryService implements CountryService{
         CountryEntity countryEntity = new CountryEntity();
         countryEntity.setCode(newCountry.code());
         countryEntity.setFullName(newCountry.fullName());
+        countryEntity.setUpdatedAt(LocalDateTime.now());
+        countryEntity.setCreatedAt(LocalDateTime.now());
 
         CountryEntity savedCountryEntity = countryRepository.save(countryEntity);
         return new Country(
@@ -62,6 +65,7 @@ public class DbCountryService implements CountryService{
                 .orElseThrow(() -> new EntityNotFoundException("Not found country: " + country));
 
         existedCountryEntity.setFullName(country.fullName());
+        existedCountryEntity.setUpdatedAt(country.updatedAt());
 
         CountryEntity savedCountryWithNewFullName = countryRepository.save(existedCountryEntity);
         return new Country(
